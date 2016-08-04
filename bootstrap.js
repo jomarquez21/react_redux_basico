@@ -40,7 +40,7 @@ class App extends React.Component {
         <hr />
         <AddAttendee {...this.props} />
         <hr />
-        <Attendees attendees={this.props.attendees} />
+        <Attendees {...this.props} />
       </div>
     );
   }
@@ -57,6 +57,7 @@ class Attendees extends React.Component {
         {this.props.attendees.map((attendee, index) =>
           <li className="attendees__attendee" key={index}>
             <Badge attendee={attendee} />
+            <RemoveAttendee removeAttendee={this.props.removeAttendee} index={index} />
           </li>
         )}
       </ul>
@@ -85,19 +86,14 @@ class AddAttendee extends React.Component {
   handleSubmit(e) {
     // Stop page refreshing
     e.preventDefault();
-
     // Store reference to our form references
     let refs = this.refs;
-
     // Users name
     let name = refs.name.value;
-
     // Users favourite colour
     let color = refs.color.value
-
     // Trigger action
     this.props.addAttendee(name, color);
-
     // Reset form so our inputs are empty again
     refs.addAttendee.reset();
   }
@@ -105,17 +101,34 @@ class AddAttendee extends React.Component {
   render() {
     return (
       <div className="row">
-        <div className="medium-6 medium-offset-3 columns">
+        <div className="col-xs-6 col-xs-offset-3">
           <form ref="addAttendee" onSubmit={this.handleSubmit.bind(this)}>
             <label for="name">Name</label>
-            <input id="name" type="text" ref="name" placeholder="John Doe" />
+            <br />
+            <input id="name" className="form-control" type="text" ref="name" placeholder="John Doe" />
+            <br />
             <label for="color">Favourite color</label>
-            <input id="color" type="text" ref="color" placeholder="#2e2e2e" />
-            <button type="submit" className="button">Add attendee</button>
+            <br />
+            <input id="color" className="form-control" type="text" ref="color" placeholder="#2e2e2e" />
+            <br />
+            <button type="submit" className="button btn">Add attendee</button>
           </form>
         </div>
       </div>
-    )
+    );
+  }
+}
+
+class RemoveAttendee extends React.Component {
+  handleOnClick() {
+    let index = this.props.index;
+    this.props.removeAttendee(index);
+  }
+  render() {
+    return (
+      <button className="alert button tiny btn
+      " onClick={this.handleOnClick.bind(this)}> &times; Remove attendee</button>
+    );
   }
 }
 
@@ -133,6 +146,13 @@ function reducer(state = [], action) {
           },
           ...state
       ];
+    case 'REMOVE_ATTENDEE':
+      return [
+        // In the array grab the state from beginning to index of one to delete
+        ...state.slice(0, action.index),
+        // Grab state from the one after one we want to delete
+        ...state.slice(action.index + 1)
+      ];
     default:
       return state;
   }
@@ -149,6 +169,12 @@ const actions = {
       // Name and colour we sent through from the form
       name,
       color
+    }
+  },
+  removeAttendee: (index) => {
+    return {
+      type: 'REMOVE_ATTENDEE',
+      index
     }
   }
 };
@@ -179,7 +205,3 @@ render(
   </Provider>,
   document.getElementById('app')
 );
-
-if (typeof window !== 'undefined') {
-    window.React = React;
-}
