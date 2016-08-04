@@ -37,13 +37,8 @@ class App extends React.Component {
     return (
       <div>
         <h1>Attendees</h1>
-        <ul>
-          {this.props.attendees.map((attendee, index) =>
-            <li className="attendees__attendee" key={attendee.id}>
-              <Badge attendee={attendee} />
-            </li>
-          )}
-        </ul>
+        <hr />
+        <Attendees attendees={this.props.attendees} />
       </div>
     );
   }
@@ -52,6 +47,20 @@ class App extends React.Component {
 /**
  * Componentes complementarios
  */
+
+class Attendees extends React.Component {
+  render() {
+    return(
+      <ul className="attendees">
+        {this.props.attendees.map((attendee, index) =>
+          <li className="attendees__attendee" key={attendee.id}>
+            <Badge attendee={attendee} />
+          </li>
+        )}
+      </ul>
+    );
+  }
+}
 
 class Badge extends React.Component {
   render() {
@@ -68,6 +77,9 @@ class Badge extends React.Component {
     );
   }
 }
+
+/* --- COMPONENTS --- */
+
 
 /* --- REDUCERS --- */
 function reducer(state = [], action) {
