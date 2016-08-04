@@ -38,6 +38,8 @@ class App extends React.Component {
       <div>
         <h1>Attendees</h1>
         <hr />
+        <AddAttendee {...this.props} />
+        <hr />
         <Attendees attendees={this.props.attendees} />
       </div>
     );
@@ -53,7 +55,7 @@ class Attendees extends React.Component {
     return(
       <ul className="attendees">
         {this.props.attendees.map((attendee, index) =>
-          <li className="attendees__attendee" key={attendee.id}>
+          <li className="attendees__attendee" key={index}>
             <Badge attendee={attendee} />
           </li>
         )}
@@ -78,16 +80,78 @@ class Badge extends React.Component {
   }
 }
 
-/* --- COMPONENTS --- */
+class AddAttendee extends React.Component {
+
+  handleSubmit(e) {
+    // Stop page refreshing
+    e.preventDefault();
+
+    // Store reference to our form references
+    let refs = this.refs;
+
+    // Users name
+    let name = refs.name.value;
+
+    // Users favourite colour
+    let color = refs.color.value
+
+    // Trigger action
+    this.props.addAttendee(name, color);
+
+    // Reset form so our inputs are empty again
+    refs.addAttendee.reset();
+  }
+
+  render() {
+    return (
+      <div className="row">
+        <div className="medium-6 medium-offset-3 columns">
+          <form ref="addAttendee" onSubmit={this.handleSubmit.bind(this)}>
+            <label for="name">Name</label>
+            <input id="name" type="text" ref="name" placeholder="John Doe" />
+            <label for="color">Favourite color</label>
+            <input id="color" type="text" ref="color" placeholder="#2e2e2e" />
+            <button type="submit" className="button">Add attendee</button>
+          </form>
+        </div>
+      </div>
+    )
+  }
+}
+
+/* --- END-COMPONENTS --- */
 
 
 /* --- REDUCERS --- */
 function reducer(state = [], action) {
-  return state;
+  switch (action.type) {
+    case 'ADD_ATTENDEE':
+      // Return a new array with old state and added attendee.
+      return [{
+              name: action.name,
+              color: action.color
+          },
+          ...state
+      ];
+    default:
+      return state;
+  }
 };
 
 /* --- ACTIONS --- */
-const actions = {};
+const actions = {
+  addAttendee: (name, color) => {
+    return {
+      // String for Reducer to pick up
+      type: 'ADD_ATTENDEE',
+      // Randomly generated id
+      id: 5,
+      // Name and colour we sent through from the form
+      name,
+      color
+    }
+  }
+};
 
 /* --- STORE --- */
 
