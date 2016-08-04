@@ -27,6 +27,11 @@ const attendeeList = [{
 } ];
 
 /* --- COMPONENTS --- */
+
+/**
+ * Componente inicial
+ */
+
 class App extends React.Component {
   render() {
     return (
@@ -34,11 +39,33 @@ class App extends React.Component {
         <h1>Attendees</h1>
         <ul>
           {this.props.attendees.map((attendee, index) =>
-            <li className="attendees__attendee" key={attendee.id}>{attendee.name}</li>
+            <li className="attendees__attendee" key={attendee.id}>
+              <Badge attendee={attendee} />
+            </li>
           )}
         </ul>
       </div>
-    )
+    );
+  }
+}
+
+/**
+ * Componentes complementarios
+ */
+
+class Badge extends React.Component {
+  render() {
+    let style = {backgroundColor: this.props.attendee.color};
+    return (
+      <div className="hello-badge" style={style}>
+        <p className="hello-badge__title">
+          <span className="hello-badge__hello">Hello<br /></span> my name is
+        </p>
+        <p className="hello-badge__name">
+          {this.props.attendee.name}
+        </p>
+      </div>
+    );
   }
 }
 
